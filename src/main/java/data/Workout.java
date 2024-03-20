@@ -7,7 +7,7 @@ public class Workout {
 	private int uebungenProWorkout;	
 	private int wochenNachPlan;
 	private boolean verletzungen;
-	private String vorliebeGerat1; //Ab hier nur noch kategorische variablen?
+	private String vorliebeGeraet1; //Ab hier nur noch kategorische variablen?
 	private String vorliebeGeraet2;
 	private String hassGeraet1;
 	private String hassGeraet2;
@@ -17,12 +17,12 @@ public class Workout {
 	private String intensitaet;
 	private Athlete athlete;
 	private double similarity;
-	private long id;
+	private int id;
 	
 	
 	
 	public Workout(int trainingszeitWoche, int trainingszeitSession, int uebungenProWorkout, int wochenNachPlan,
-			boolean verletzungen, String vorliebeGerat1, String vorliebeGeraet2, String hassGeraet1, String hassGeraet2,
+			boolean verletzungen, String vorliebeGeraet1, String vorliebeGeraet2, String hassGeraet1, String hassGeraet2,
 			String vorhandeneGeraete, String trainingsmethode, String zielmuskulatur, String intensitaet, Athlete athlete) {
 		super();
 		this.trainingszeitWoche = trainingszeitWoche;
@@ -30,7 +30,7 @@ public class Workout {
 		this.uebungenProWorkout = uebungenProWorkout;
 		this.wochenNachPlan = wochenNachPlan;
 		this.verletzungen = verletzungen;
-		this.vorliebeGerat1 = vorliebeGerat1;
+		this.vorliebeGeraet1 = vorliebeGeraet1;
 		this.vorliebeGeraet2 = vorliebeGeraet2;
 		this.hassGeraet1 = hassGeraet1;
 		this.hassGeraet2 = hassGeraet2;
@@ -42,13 +42,13 @@ public class Workout {
 	
 	
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
 
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -81,8 +81,8 @@ public class Workout {
 	public boolean isVerletzungen() {
 		return verletzungen;
 	}
-	public String getVorliebeGerat1() {
-		return vorliebeGerat1;
+	public String getVorliebeGeraet1() {
+		return vorliebeGeraet1;
 	}
 	public String getVorliebeGeraet2() {
 		return vorliebeGeraet2;
@@ -120,8 +120,8 @@ public class Workout {
 	public void setVerletzungen(boolean verletzungen) {
 		this.verletzungen = verletzungen;
 	}
-	public void setVorliebeGerat1(String vorliebeGerat1) {
-		this.vorliebeGerat1 = vorliebeGerat1;
+	public void setVorliebeGeraet1(String vorliebeGeraet1) {
+		this.vorliebeGeraet1 = vorliebeGeraet1;
 	}
 	public void setVorliebeGeraet2(String vorliebeGeraet2) {
 		this.vorliebeGeraet2 = vorliebeGeraet2;

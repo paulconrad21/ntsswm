@@ -182,7 +182,6 @@
 					</select></td>
 				</tr>
 				<tr>
-					<td></td>
 					<td><input type="submit" value="Finde Dein Passendes Workout!"></td>
 				</tr>
 			</table>

@@ -2,12 +2,16 @@ package cbr;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.opencsv.CSVWriter;
+
 import data.Athlete;
+import data.Ergebnis;
 import data.Workout;
 import de.dfki.mycbr.core.ICaseBase;
 import de.dfki.mycbr.core.Project;
@@ -399,5 +403,99 @@ public class CbrAgent {
 		
 	}	
 	
+	
+	
+	public Ergebnis getWorkout(int id) {		
+	     
+		 try {
+			 	
+				
+				String line = "";
+				String cvsSplitBy = ",";
+				int counter = 1;
+				BufferedReader br = new BufferedReader(new FileReader("C:\\\\Users\\\\Paul\\\\eclipse-workspace\\\\Ntswwm-Workout-Planner\\\\src\\\\main\\\\java\\\\cbr\\\\Workouts.csv"));
+				while ((line = br.readLine()) != null)
+				{
+					if(counter == id) {
+						String[] athlete = line.split(cvsSplitBy);
+						
+						Ergebnis ergebnis = new Ergebnis(id, athlete[1], athlete[2], athlete[3], athlete[4], athlete[5], athlete[6],
+								athlete[7], athlete[8], athlete[9], athlete[10], Double.parseDouble(athlete[11]),athlete[12]);
+						
+						br.close();
+						return ergebnis;
+					}								
+				counter++;
+
+				}
+				br.close();
+				return null;
+			} catch (IOException e) {
+				System.err.println("CbrAgent.java: Fehler beim abfragen des Workouts basierend auf der ID.");
+				e.printStackTrace();
+			}
+		return null;
+	}
+	
+	// Abspeichern des angepassten Workouts des Nutzers in der Workout.csv
+	public void saveWorkout(Ergebnis ergebnis) {
+		
+		String csvFile = "C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Workouts.csv";
+
+		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFile, true))) {
+			
+			String[] addErgebnis = { String.valueOf(ergebnis.getId()), ergebnis.getUebung1(),ergebnis.getZeit1wdh1(), ergebnis.getUebung2(),
+					ergebnis.getZeit2wdh2(),ergebnis.getUebung3(),ergebnis.getZeit3wdh3(),ergebnis.getUebung4(),ergebnis.getZeit4wdh4(),
+					ergebnis.getUebung5(),ergebnis.getZeit5wdh5(),String.valueOf(ergebnis.getPauseInMin()),ergebnis.getKategorie()};
+
+			csvWriter.writeNext(addErgebnis);
+			System.out.println("Ergebnis zur Workout.csv hinzugefuegt");
+			csvWriter.close();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			initWorkoutCaseBase();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	// Abspeichern des Workouts in Workout_CaseBase.csv
+	public void saveWorkoutInCaseBase(Workout workout) {
+		String csvFile = "C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Workout_CaseBase.csv";
+
+		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFile, true))) {
+			
+			String[] addWorkout = { String.valueOf(workout.getId()), String.valueOf(workout.getTrainingszeitWoche()),String.valueOf(workout.getTrainingszeitSession()),
+						String.valueOf(workout.getUebungenProWorkout()),String.valueOf(workout.getWochenNachPlan()),String.valueOf(workout.isVerletzungen()),
+						workout.getVorliebeGeraet1(),workout.getVorliebeGeraet2(),workout.getHassGeraet1(),workout.getHassGeraet2(),workout.getVorhandeneGeraete(),
+						workout.getTrainingsmethode(),workout.getZielmuskulatur(),workout.getIntensitaet()};
+
+			csvWriter.writeNext(addWorkout);
+			System.out.println("Bearbeitetes Workout zur Workout CaseBase hinzugefuegt");
+			csvWriter.close();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			initWorkoutCaseBase();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public int getAthletenCaseBaseSize() {
+		return athletenCaseBase.getCases().size();
+		
+	}
+	
+	public int getWorkoutCaseBaseSize() {
+		return workoutCaseBase.getCases().size();
+		
+	}
 	
 }
