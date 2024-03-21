@@ -83,7 +83,7 @@ public class CbrAgent {
 	private SymbolDesc zielmuskulaturDesc;
 	private SymbolDesc intensitaetDesc;
 	private StringDesc AthleteDesc;
-	
+	//test test
 	
 	
 	
