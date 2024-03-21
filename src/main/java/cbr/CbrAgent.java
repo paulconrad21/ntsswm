@@ -65,6 +65,7 @@ public class CbrAgent {
 	private SymbolDesc sportartDesc;
 	private SymbolDesc regenerationsfaehigkeitDesc;
 	private SymbolDesc motivationsfaktorDesc;	
+	private SymbolDesc athletenBezeichnungDesc;
 	
 	
 	//Attribute für Workout
@@ -81,7 +82,7 @@ public class CbrAgent {
 	private SymbolDesc trainingsmethodeDesc;
 	private SymbolDesc zielmuskulaturDesc;
 	private SymbolDesc intensitaetDesc;
-	private SymbolDesc AthleteDesc;
+	private StringDesc AthleteDesc;
 	
 	
 	
@@ -304,6 +305,7 @@ public class CbrAgent {
 					instance.addAttribute(sportartDesc, athlete[10]);
 					instance.addAttribute(regenerationsfaehigkeitDesc, athlete[11]);
 					instance.addAttribute(motivationsfaktorDesc, athlete[12]);
+					instance.addAttribute(athletenBezeichnungDesc, athlete[13]);
 					athletenCaseBase.addCase(instance);
 				} catch (Exception e) {
 					System.out.println(e);
@@ -389,8 +391,8 @@ public class CbrAgent {
 					obj.getAttForDesc(zielDesc).getValueAsString(),
 					obj.getAttForDesc(sportartDesc).getValueAsString(),
 					obj.getAttForDesc(regenerationsfaehigkeitDesc).getValueAsString(),
-					obj.getAttForDesc(motivationsfaktorDesc).getValueAsString());
-
+					obj.getAttForDesc(motivationsfaktorDesc).getValueAsString(),
+					obj.getAttForDesc(athletenBezeichnungDesc).getValueAsString());
 			resultingAthlete.add(athlete);
 			resultingAthlete.get(i).setSimilarity(athletenResult.get(i).getSecond().getValue());
 			System.out.println(athletenResult.get(i).getFirst().getName() + " - Similarity: "
@@ -413,7 +415,7 @@ public class CbrAgent {
 				String line = "";
 				String cvsSplitBy = ",";
 				int counter = 1;
-				BufferedReader br = new BufferedReader(new FileReader("C:\\\\Users\\\\Paul\\\\eclipse-workspace\\\\Ntswwm-Workout-Planner\\\\src\\\\main\\\\java\\\\cbr\\\\Workouts.csv"));
+				BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Workouts.csv"));
 				while ((line = br.readLine()) != null)
 				{
 					if(counter == id) {
@@ -472,7 +474,7 @@ public class CbrAgent {
 			String[] addWorkout = { String.valueOf(workout.getId()), String.valueOf(workout.getTrainingszeitWoche()),String.valueOf(workout.getTrainingszeitSession()),
 						String.valueOf(workout.getUebungenProWorkout()),String.valueOf(workout.getWochenNachPlan()),String.valueOf(workout.isVerletzungen()),
 						workout.getVorliebeGeraet1(),workout.getVorliebeGeraet2(),workout.getHassGeraet1(),workout.getHassGeraet2(),workout.getVorhandeneGeraete(),
-						workout.getTrainingsmethode(),workout.getZielmuskulatur(),workout.getIntensitaet()};
+						workout.getTrainingsmethode(),workout.getZielmuskulatur(),workout.getIntensitaet(),workout.getAthlete()};
 
 			csvWriter.writeNext(addWorkout);
 			System.out.println("Bearbeitetes Workout zur Workout CaseBase hinzugefuegt");

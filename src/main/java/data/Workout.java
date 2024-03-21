@@ -15,7 +15,7 @@ public class Workout {
 	private String trainingsmethode;
 	private String zielmuskulatur;
 	private String intensitaet;
-	private Athlete athlete;
+	private String athletenBezeichnung;
 	private double similarity;
 	private int id;
 	
@@ -23,7 +23,7 @@ public class Workout {
 	
 	public Workout(int trainingszeitWoche, int trainingszeitSession, int uebungenProWorkout, int wochenNachPlan,
 			boolean verletzungen, String vorliebeGeraet1, String vorliebeGeraet2, String hassGeraet1, String hassGeraet2,
-			String vorhandeneGeraete, String trainingsmethode, String zielmuskulatur, String intensitaet, Athlete athlete) {
+			String vorhandeneGeraete, String trainingsmethode, String zielmuskulatur, String intensitaet, String athletenBezeichnung) {
 		super();
 		this.trainingszeitWoche = trainingszeitWoche;
 		this.trainingszeitSession = trainingszeitSession;
@@ -38,7 +38,7 @@ public class Workout {
 		this.trainingsmethode = trainingsmethode;
 		this.zielmuskulatur = zielmuskulatur;
 		this.intensitaet = intensitaet;
-		this.athlete = athlete;	}
+		this.athletenBezeichnung = athletenBezeichnung;	}
 	
 	
 	
@@ -144,11 +144,11 @@ public class Workout {
 	public void setIntensitaet(String intensitaet) {
 		this.intensitaet = intensitaet;
 	}
-	public Athlete getAthlete() {
-		return athlete;
+	public String getAthlete() {
+		return athletenBezeichnung;
 	}
-	public void setAthlete(Athlete athlete) {
-		this.athlete = athlete;
+	public void setAthlete(String athlete) {
+		this.athletenBezeichnung = athlete;
 	}
 	
 	

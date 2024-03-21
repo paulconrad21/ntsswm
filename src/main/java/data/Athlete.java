@@ -14,6 +14,7 @@ public class Athlete {
 	private String sportart;
 	private String regenerationsfaehigkeit;
 	private String motivationsfaktor;
+	private String athletenBezeichnung;
 	private double similarity;
 	
 	public Athlete() {
@@ -23,7 +24,7 @@ public class Athlete {
 	
 	public Athlete(int koerpergroesse, double gewicht, int erfahrungInJahre, double koerperfettanteil, int ruhepuls,
 			int maxHerzfrequenz, String trainingszustand, String geschlecht, String ziel, String sportart,
-			String regenerationsfähigkeit, String motivationsfaktor) {
+			String regenerationsfähigkeit, String motivationsfaktor, String athletenBezeichnung) {
 		super();
 		this.koerpergroesse = koerpergroesse;
 		this.gewicht = gewicht;
@@ -37,9 +38,20 @@ public class Athlete {
 		this.sportart = sportart;
 		this.regenerationsfaehigkeit = regenerationsfähigkeit;
 		this.motivationsfaktor = motivationsfaktor;
+		this.athletenBezeichnung = athletenBezeichnung;
 	}
 
 	
+	
+
+	public String getAthletenBezeichnung() {
+		return athletenBezeichnung;
+	}
+
+
+	public void setAthletenBezeichnung(String athletenBezeichnung) {
+		this.athletenBezeichnung = athletenBezeichnung;
+	}
 
 
 	public double getSimilarity() {

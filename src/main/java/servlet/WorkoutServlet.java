@@ -88,60 +88,47 @@ public class WorkoutServlet extends HttpServlet{
 			//Athleten anlegen
 			Athlete queryAthlete = new Athlete(inputKoerpergroesseParsed,inputKoerpergewichtParsed,inputTrainingserfahrungParsed,
 					inputKoerperfettanteilParsed,inputRuhepulsParsed,inputMaxHerzfrequenzParsed, inputTrainingszustand,
-					inputGeschlecht,inputZiel,inputSportart,inputRegenerationsfaehigkeit,inputMotivationsfaktor);
+					inputGeschlecht,inputZiel,inputSportart,inputRegenerationsfaehigkeit,inputMotivationsfaktor,"");
 			
 			//Neuen CBR Agenten anlegen (Dabei CaseBases initialisieren)
-			//cbrAgent = new CbrAgent();		
+			cbrAgent = new CbrAgent();		
 		
 			//Query lossenden für Athleten
-			//athletenResult = cbrAgent.startAthletenQuery(queryAthlete);
+			athletenResult = cbrAgent.startAthletenQuery(queryAthlete);
 			
-			//resultingAthletes = cbrAgent.printAthlete(athletenResult, 3);
+			resultingAthletes = cbrAgent.printAthlete(athletenResult, 3);
 			
 			//Erstellen eines Workout-Objekts und Frontend Daten und Athlete übergeben
-			//workout = new Workout(inputWorkoutsProWocheParsed,inputTrainingszeitProSessionParsed,inputUebungenProWorkoutParsed,
-				//	inputWochenNachPlanParsed,inputVerletzungenParsed,inputVorliebeGeraet1,inputVorliebeGeraet2,inputHassGeraet1,inputHassGeraet2,
-				//	inputVorhandeneGeraete,inputTrainingsmethode,inputZielmuskulatur,inputIntensitaet,resultingAthletes.get(0));
+			workout = new Workout(inputWorkoutsProWocheParsed,inputTrainingszeitProSessionParsed,inputUebungenProWorkoutParsed,
+				inputWochenNachPlanParsed,inputVerletzungenParsed,inputVorliebeGeraet1,inputVorliebeGeraet2,inputHassGeraet1,inputHassGeraet2,
+				inputVorhandeneGeraete,inputTrainingsmethode,inputZielmuskulatur,inputIntensitaet,resultingAthletes.get(0).getAthletenBezeichnung());
 			  
 			//Query für Workout lossenden
-			//workoutResult = cbrAgent.startWorkoutQuery(workout);
+			workoutResult = cbrAgent.startWorkoutQuery(workout);
 			
-			//resultingWorkouts = cbrAgent.printWorkout(workoutResult, 3);
+			resultingWorkouts = cbrAgent.printWorkout(workoutResult, 3);
 			
 			//Ergebnis auswerten in Print funktion und ID des ähnlichsten Workouts abspeichern
-			//Workout mostSimilarWorkout = resultingWorkouts.get(0);
+			Workout mostSimilarWorkout = resultingWorkouts.get(0);
 			
 			//Aus Workouts.csv Workout basierend auf ID auslesen
-			//Ergebnis workoutErgebnis = cbrAgent.getWorkout(mostSimilarWorkout.getId());
+			Ergebnis workoutErgebnis = cbrAgent.getWorkout(mostSimilarWorkout.getId());
 			
 			
 			//Daten im request hinterlegen und weiterleiten auf extra Seite
-			//request.setAttribute("uebung1", workoutErgebnis.getUebung1());
-		    //request.setAttribute("uebung2", workoutErgebnis.getUebung2());
-			//request.setAttribute("uebung3", workoutErgebnis.getUebung3());
-			//request.setAttribute("uebung4", workoutErgebnis.getUebung4());
-			//request.setAttribute("uebung5", workoutErgebnis.getUebung5());
-			//request.setAttribute("zeit1wdh1", workoutErgebnis.getZeit1wdh1());
-			//request.setAttribute("zeit2wdh2", workoutErgebnis.getZeit2wdh2());
-			//request.setAttribute("zeit3wdh3", workoutErgebnis.getZeit3wdh3());
-			//request.setAttribute("zeit4wdh4", workoutErgebnis.getZeit4wdh4());
-			//request.setAttribute("zeit5wdh5", workoutErgebnis.getZeit5wdh5());
-			//request.setAttribute("pauseInMin", workoutErgebnis.getPauseInMin());
-			//request.setAttribute("kategorie", workoutErgebnis.getKategorie());
+			request.setAttribute("uebung1", workoutErgebnis.getUebung1());
+		    request.setAttribute("uebung2", workoutErgebnis.getUebung2());
+			request.setAttribute("uebung3", workoutErgebnis.getUebung3());
+			request.setAttribute("uebung4", workoutErgebnis.getUebung4());
+			request.setAttribute("uebung5", workoutErgebnis.getUebung5());
+			request.setAttribute("zeit1wdh1", workoutErgebnis.getZeit1wdh1());
+			request.setAttribute("zeit2wdh2", workoutErgebnis.getZeit2wdh2());
+			request.setAttribute("zeit3wdh3", workoutErgebnis.getZeit3wdh3());
+			request.setAttribute("zeit4wdh4", workoutErgebnis.getZeit4wdh4());
+			request.setAttribute("zeit5wdh5", workoutErgebnis.getZeit5wdh5());
+			request.setAttribute("pauseInMin", workoutErgebnis.getPauseInMin());
+			request.setAttribute("kategorie", workoutErgebnis.getKategorie());
 			
-			//Für Testzwecke:
-					request.setAttribute("uebung1", "bandruecken");
-				    request.setAttribute("uebung2", "klimmzuege");
-					request.setAttribute("uebung3", "kreuzheben");
-					request.setAttribute("uebung4", "plank");
-					request.setAttribute("uebung5", "dips");
-					request.setAttribute("zeit1wdh1", "12 wdh * 3");
-					request.setAttribute("zeit2wdh2", "10 wdh * 3");
-					request.setAttribute("zeit3wdh3", "8 wdh * 3");
-					request.setAttribute("zeit4wdh4", "1 min * 3");
-					request.setAttribute("zeit5wdh5", "12 wdh * 3");
-					request.setAttribute("pauseInMin", 1);
-					request.setAttribute("kategorie", "Muskelaufbau");		
 					
 			
 			request.getRequestDispatcher("result.jsp").forward(request, response);
