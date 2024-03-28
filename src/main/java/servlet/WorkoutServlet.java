@@ -67,24 +67,40 @@ public class WorkoutServlet extends HttpServlet{
 		
 
 		try {
+			
+			int inputKoerpergroesseParsed = 0;
+			double inputKoerpergewichtParsed = 0;
+			int inputTrainingserfahrungParsed = 0;
+			double inputKoerperfettanteilParsed = 0;
+			int inputRuhepulsParsed = 0;
+			int inputMaxHerzfrequenzParsed = 0;
+			int inputWorkoutsProWocheParsed = 0;
+			int inputTrainingszeitProSessionParsed = 0;
+			int inputUebungenProWorkoutParsed = 0;
+			int inputWochenNachPlanParsed = 0;
+			boolean inputVerletzungenParsed = false;
+			
+			try {
 			//Daten parsen zu korrektem Datentyp
-			int inputKoerpergroesseParsed = Integer.parseInt(inputKoerpergroesse);
-			double inputKoerpergewichtParsed = Double.parseDouble(inputKoerpergewicht);
-			int inputTrainingserfahrungParsed = Integer.parseInt(inputTrainingserfahrung);
-			double inputKoerperfettanteilParsed = Double.parseDouble(inputKoerperfettanteil);
-			int inputRuhepulsParsed = Integer.parseInt(inputRuhepuls);
-			int inputMaxHerzfrequenzParsed = Integer.parseInt(inputMaxHerzfrequenz);
-			int inputWorkoutsProWocheParsed = Integer.parseInt(inputWorkoutsProWoche);
-			int inputTrainingszeitProSessionParsed = Integer.parseInt(inputTrainingszeitProSession);
-			int inputUebungenProWorkoutParsed = Integer.parseInt(inputUebungenProWorkout);
-			int inputWochenNachPlanParsed = Integer.parseInt(inputWochenNachPlan);
-			boolean inputVerletzungenParsed;
+			inputKoerpergroesseParsed = Integer.parseInt(inputKoerpergroesse);
+			inputKoerpergewichtParsed = Double.parseDouble(inputKoerpergewicht);
+			inputTrainingserfahrungParsed = Integer.parseInt(inputTrainingserfahrung);
+			inputKoerperfettanteilParsed = Double.parseDouble(inputKoerperfettanteil);
+			inputRuhepulsParsed = Integer.parseInt(inputRuhepuls);
+			inputMaxHerzfrequenzParsed = Integer.parseInt(inputMaxHerzfrequenz);
+			inputWorkoutsProWocheParsed = Integer.parseInt(inputWorkoutsProWoche);
+			inputTrainingszeitProSessionParsed = Integer.parseInt(inputTrainingszeitProSession);
+			inputUebungenProWorkoutParsed = Integer.parseInt(inputUebungenProWorkout);
+			inputWochenNachPlanParsed = Integer.parseInt(inputWochenNachPlan);
 			if(inputVerletzungen.equalsIgnoreCase("Ja")) {
 				inputVerletzungenParsed = true;
 			} else {
 				inputVerletzungenParsed = false;
 			}
-			
+			} catch(Exception e) {
+				System.out.println("Fehler beim Parsen der Eingaben");
+				e.printStackTrace();
+			}
 			//Athleten anlegen
 			Athlete queryAthlete = new Athlete(inputKoerpergroesseParsed,inputKoerpergewichtParsed,inputTrainingserfahrungParsed,
 					inputKoerperfettanteilParsed,inputRuhepulsParsed,inputMaxHerzfrequenzParsed, inputTrainingszustand,
@@ -92,11 +108,12 @@ public class WorkoutServlet extends HttpServlet{
 			
 			//Neuen CBR Agenten anlegen (Dabei CaseBases initialisieren)
 			cbrAgent = new CbrAgent();		
-		
+			System.out.println("Größe der Athleten CaseBase: " + cbrAgent.getAthletenCaseBaseSize());
+			System.out.println("Größe der Workout CaseBase: " + cbrAgent.getWorkoutCaseBaseSize());
 			//Query lossenden für Athleten
 			athletenResult = cbrAgent.startAthletenQuery(queryAthlete);
 			
-			resultingAthletes = cbrAgent.printAthlete(athletenResult, 3);
+			resultingAthletes = cbrAgent.printAthlete(athletenResult, 1);
 			
 			//Erstellen eines Workout-Objekts und Frontend Daten und Athlete übergeben
 			workout = new Workout(inputWorkoutsProWocheParsed,inputTrainingszeitProSessionParsed,inputUebungenProWorkoutParsed,
@@ -106,7 +123,7 @@ public class WorkoutServlet extends HttpServlet{
 			//Query für Workout lossenden
 			workoutResult = cbrAgent.startWorkoutQuery(workout);
 			
-			resultingWorkouts = cbrAgent.printWorkout(workoutResult, 3);
+			resultingWorkouts = cbrAgent.printWorkout(workoutResult, 1);
 			
 			//Ergebnis auswerten in Print funktion und ID des ähnlichsten Workouts abspeichern
 			Workout mostSimilarWorkout = resultingWorkouts.get(0);
