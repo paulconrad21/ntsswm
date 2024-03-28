@@ -31,6 +31,7 @@ import de.dfki.mycbr.core.similarity.Similarity;
 import de.dfki.mycbr.core.similarity.SymbolFct;
 import de.dfki.mycbr.core.similarity.config.AmalgamationConfig;
 import de.dfki.mycbr.core.similarity.config.NumberConfig;
+import de.dfki.mycbr.core.similarity.config.StringConfig;
 import de.dfki.mycbr.util.Pair;
 
 public class CbrAgent {
@@ -65,7 +66,7 @@ public class CbrAgent {
 	private SymbolDesc sportartDesc;
 	private SymbolDesc regenerationsfaehigkeitDesc;
 	private SymbolDesc motivationsfaktorDesc;	
-	private SymbolDesc athletenBezeichnungDesc;
+	private StringDesc athletenBezeichnungDesc;
 	
 	
 	//Attribute für Workout
@@ -73,7 +74,7 @@ public class CbrAgent {
 	private IntegerDesc trainingszeitSessionDesc;
 	private IntegerDesc uebungenProWorkoutDesc;	
 	private IntegerDesc wochenNachPlanDesc;
-	private SymbolDesc verletzungenDesc;
+	private BooleanDesc verletzungenDesc;
 	private SymbolDesc vorliebeGeraet1Desc;
 	private SymbolDesc vorliebeGeraet2Desc;
 	private SymbolDesc hassGeraet1Desc;
@@ -82,7 +83,7 @@ public class CbrAgent {
 	private SymbolDesc trainingsmethodeDesc;
 	private SymbolDesc zielmuskulaturDesc;
 	private SymbolDesc intensitaetDesc;
-	private StringDesc AthleteDesc;
+	private StringDesc athleteDesc;
 	
 	
 	
@@ -126,13 +127,13 @@ public class CbrAgent {
 			koerpergroesseFct.setFunctionParameterL(2);
 			athletenGlobalSim.setWeight("koerpergroesse", 2);
 			
-			erfahrungInJahreDesc = new IntegerDesc(athletenConcept, "erfahrungInJahr", 0, 100);
+			erfahrungInJahreDesc = new IntegerDesc(athletenConcept, "erfahrungInJahre", 0, 100);
 			IntegerFct erfahrungInJahreFct = erfahrungInJahreDesc.addIntegerFct("erfahrungInJahrFct", true);
 			erfahrungInJahreFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
 			erfahrungInJahreFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
 			erfahrungInJahreFct.setFunctionParameterR(2);
 			erfahrungInJahreFct.setFunctionParameterL(2);
-			athletenGlobalSim.setWeight("erfahrungInJahr", 2);
+			athletenGlobalSim.setWeight("erfahrungInJahre", 2);
 			
 			ruhepulsDesc = new IntegerDesc(athletenConcept, "ruhepuls", 0, 200);
 			IntegerFct ruhepulsFct = ruhepulsDesc.addIntegerFct("ruhepulsFct", true);
@@ -257,7 +258,10 @@ public class CbrAgent {
 			motivationsfaktorFct.setSimilarity("Unterdurchschnittlich", "Durchschnittlich", 0.60);
 			athletenGlobalSim.setWeight("motivationsfaktor", 2);	
 			
-			
+			//String
+			athletenBezeichnungDesc = new StringDesc(athletenConcept, "AthleteBezeichnung");
+			athletenBezeichnungDesc.addStringFct(StringConfig.LEVENSHTEIN, "athleteBezeichnungFct", true);
+			workoutGlobalSim.setWeight("AthleteBezeichnung", 2);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -265,7 +269,7 @@ public class CbrAgent {
 	}
 	
 	private void initWorkoutConcept() {
-	    try {
+		try {
             workoutConcept = project.createTopConcept("Workout");
             workoutGlobalSim = workoutConcept.addAmalgamationFct(AmalgamationConfig.WEIGHTED_SUM, "workoutSimFct", true);
             
@@ -303,16 +307,13 @@ public class CbrAgent {
             workoutGlobalSim.setWeight("wochenNachPlan", 2);
             
                               
-            //SYMBOL:
             
-            verletzungenDesc = new SymbolDesc(workoutConcept, "verletzungen", null);
-            verletzungenDesc.addSymbol("Ja");
-            verletzungenDesc.addSymbol("Nein");
-            SymbolFct verletzungenFct = verletzungenDesc.addSymbolFct("verletzungenFct", true);
-            verletzungenFct.setSimilarity("Ja", "Nein", 0.20);
-            verletzungenFct.setSimilarity("Nein", "Ja", 0.20);
-            workoutGlobalSim.setWeight("verletzungen", 2);
-                      
+            //BOOLEAN
+            verletzungenDesc = new BooleanDesc(workoutConcept, "verletzungen");
+            verletzungenDesc.addBooleanFct("verletzungenDesc", true);
+            workoutGlobalSim.setWeight("verletzungen", 1);
+            
+            //SYMBOL:
             vorliebeGeraet1Desc = new SymbolDesc(workoutConcept, "vorliebeGeraet1", null);
             vorliebeGeraet1Desc.addSymbol("Brustpresse");
             vorliebeGeraet1Desc.addSymbol("Latzug");
@@ -395,16 +396,23 @@ public class CbrAgent {
             workoutGlobalSim.setWeight("zielmuskulatur", 2);
             
             intensitaetDesc = new SymbolDesc(workoutConcept, "intensitaet", null);
-            intensitaetDesc.addSymbol("niedrigeIntensitaet");
-            intensitaetDesc.addSymbol("hoheIntensitaet");
+            intensitaetDesc.addSymbol("Hoch");
+            intensitaetDesc.addSymbol("Mittel");
+            intensitaetDesc.addSymbol("Niedrig");
             SymbolFct intensitaetFct = intensitaetDesc.addSymbolFct("intensitaetFct", true);
-            intensitaetFct.setSimilarity("niedrigeIntensitaet", "hoheIntensitaet", 0.20);
-            intensitaetFct.setSimilarity("hoheIntensitaet", "niedrigeIntensitaet", 0.20);
+            intensitaetFct.setSimilarity("Hoch", "Mittel", 0.20);
+            intensitaetFct.setSimilarity("Hoch", "Niedrig", 0.20);
+            intensitaetFct.setSimilarity("Mittel", "Niedrig", 0.20);
+            intensitaetFct.setSimilarity("Mittel", "Hoch", 0.20);
+            intensitaetFct.setSimilarity("Niedrig", "Mittel", 0.20);
+            intensitaetFct.setSimilarity("Niedrig", "Hoch", 0.20);
             workoutGlobalSim.setWeight("intensitaet", 2);
             
             //String
-            
-            AthleteDesc = new StringDesc(workoutConcept, "athleten");
+            athleteDesc = new StringDesc(workoutConcept, "Athlete");
+            athleteDesc.addStringFct(StringConfig.LEVENSHTEIN, "athleteFct", true);
+			workoutGlobalSim.setWeight("Athlete", 2);
+
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -428,11 +436,11 @@ public class CbrAgent {
 			String line = "";
 			String cvsSplitBy = ",";
 
-			BufferedReader br = new BufferedReader(new FileReader("Athletes_CaseBase.csv"));
+			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Athletes_CaseBase.csv"));
 			while ((line = br.readLine()) != null) // returns a Boolean value
 			{
 				String[] athlete = line.split(cvsSplitBy); // use comma as separator
-
+				System.out.println("Einlese-Iteration der Athleten Casebase");
 			
 				try {
 					instance = athletenConcept.addInstance(athlete[0]);
@@ -451,7 +459,9 @@ public class CbrAgent {
 					instance.addAttribute(athletenBezeichnungDesc, athlete[13]);
 					athletenCaseBase.addCase(instance);
 				} catch (Exception e) {
+					System.out.println("Konnte Athleten nicht einlesen aus der CSV");
 					System.out.println(e);
+					e.printStackTrace();
 				}
 
 			}
@@ -482,7 +492,7 @@ public class CbrAgent {
             String line = "";
             String cvsSplitBy = ",";
 
-            BufferedReader br = new BufferedReader(new FileReader("Workout_CaseBase.csv"));
+            BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Workout_CaseBase.csv"));
             while ((line = br.readLine()) != null) // returns a Boolean value
             {
                 String[] workout = line.split(cvsSplitBy); // use comma as separator
@@ -503,7 +513,7 @@ public class CbrAgent {
                     instance.addAttribute(trainingsmethodeDesc, workout[11]);
                     instance.addAttribute(zielmuskulaturDesc, workout[12]);
                     instance.addAttribute(intensitaetDesc, workout[13]);
-                    instance.addAttribute(AthleteDesc, workout[13]);
+                    instance.addAttribute(athleteDesc, workout[13]);
                     workoutCaseBase.addCase(instance);
                 } catch (Exception e) {
                     System.out.println(e);
@@ -512,7 +522,7 @@ public class CbrAgent {
             }
             br.close();
         } catch (IOException e) {
-            System.err.println("CbrAgent.java: Fehler beim Hinzufuegen der Athleten-Cases.");
+            System.err.println("CbrAgent.java: Fehler beim Hinzufuegen der Workout-Cases.");
             e.printStackTrace();
         }
 	}
@@ -526,7 +536,7 @@ public class CbrAgent {
 				ruhepulsDesc = (IntegerDesc) this.athletenConcept.getAllAttributeDescs().get("ruhepuls");
 				maxHerfrequenzDesc = (IntegerDesc) this.athletenConcept.getAllAttributeDescs().get("maxHerzfrequenz");
 				trainingszustandDesc = (SymbolDesc) this.athletenConcept.getAllAttributeDescs().get("trainingszustand");
-				geschlechtDesc = (BooleanDesc) this.athletenConcept.getAllAttributeDescs().get("geschlecht");
+				geschlechtDesc = (SymbolDesc) this.athletenConcept.getAllAttributeDescs().get("geschlecht");
 				zielDesc = (SymbolDesc) this.athletenConcept.getAllAttributeDescs().get("ziel");
 				sportartDesc = (SymbolDesc) this.athletenConcept.getAllAttributeDescs().get("sportart");
 				regenerationsfaehigkeitDesc = (SymbolDesc) this.athletenConcept.getAllAttributeDescs().get("regenerationsfaehigkeit");
@@ -555,17 +565,17 @@ public class CbrAgent {
 
 				// Send query
 				athletenRetrieve.start();
-				System.out.println("[DEBUG] CbrAgent: Query successful!");
+				System.out.println("[DEBUG] CbrAgent: Athleten Query successful!");
 				return athletenRetrieve.getResult();
 	}
 	
 	public List<Pair<Instance, Similarity>> startWorkoutQuery(Workout workout) {
-	 // Get the values of the request
+		// Get the values of the request
         trainingszeitWocheDesc = (IntegerDesc) this.workoutConcept.getAllAttributeDescs().get("trainingsZeitProWoche");
         trainingszeitSessionDesc = (IntegerDesc) this.workoutConcept.getAllAttributeDescs().get("trainingszeitProWorkout");
         uebungenProWorkoutDesc = (IntegerDesc) this.workoutConcept.getAllAttributeDescs().get("uebungenProWorkout");
         wochenNachPlanDesc = (IntegerDesc) this.workoutConcept.getAllAttributeDescs().get("wochenNachPlan");
-        verletzungenDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("verletzungen");
+        verletzungenDesc = (BooleanDesc) this.workoutConcept.getAllAttributeDescs().get("verletzungen");
         vorliebeGeraet1Desc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("vorliebeGeraet1");
         vorliebeGeraet2Desc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("vorliebeGeraet2");
         hassGeraet1Desc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("hassGeraet1");
@@ -574,32 +584,35 @@ public class CbrAgent {
         trainingsmethodeDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("trainingsmethode");
         zielmuskulaturDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("zielmuskulatur");
         intensitaetDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("intensitaet");
-        //athlete add
+    	athleteDesc = (StringDesc) this.workoutConcept.getAllAttributeDescs().get("athlete");
         // Insert values into query
-       /* try {
+       try {
             workoutRetrieve = new Retrieval(workoutConcept, workoutCaseBase);
             workoutRetrieve.setRetrievalMethod(RetrievalMethod.RETRIEVE_SORTED);
             Instance query = workoutRetrieve.getQueryInstance();
-            query.addAttribute(trainingszeitWocheDesc, trainingszeitWocheDesc.getAttribute(workout.gettrainingszeitWoche));
-            query.addAttribute(gewichtDesc, gewichtDesc.getAttribute(athlete.getGewicht()));
-            query.addAttribute(erfahrungInJahreDesc, erfahrungInJahreDesc.getAttribute(athlete.getErfahrungInJahre()));
-            query.addAttribute(koerperfettanteilDesc, koerperfettanteilDesc.getAttribute(athlete.getKoerperfettanteil()));
-            query.addAttribute(ruhepulsDesc, ruhepulsDesc.getAttribute(athlete.getRuhepuls()));
-            query.addAttribute(maxHerfrequenzDesc, maxHerfrequenzDesc.getAttribute(athlete.getMaxHerzfrequenz()));
-            query.addAttribute(trainingszustandDesc, trainingszustandDesc.getAttribute(athlete.getTrainingszustand()));
-            query.addAttribute(geschlechtDesc, geschlechtDesc.getAttribute(athlete.getGeschlecht()));
-            query.addAttribute(zielDesc, zielDesc.getAttribute(athlete.getZiel()));
-            query.addAttribute(sportartDesc, sportartDesc.getAttribute(athlete.getSportart()));
-            query.addAttribute(regenerationsfaehigkeitDesc, regenerationsfaehigkeitDesc.getAttribute(athlete.getRegenerationsfaehigkeit()));
-            query.addAttribute(motivationsfaktorDesc, motivationsfaktorDesc.getAttribute(athlete.getMotivationsfaktor()));
-            */
+            query.addAttribute(trainingszeitWocheDesc, trainingszeitWocheDesc.getAttribute(workout.getTrainingszeitWoche()));
+            query.addAttribute(trainingszeitSessionDesc, trainingszeitSessionDesc.getAttribute(workout.getTrainingszeitSession()));
+            query.addAttribute(uebungenProWorkoutDesc, uebungenProWorkoutDesc.getAttribute(workout.getUebungenProWorkout()));
+            query.addAttribute(wochenNachPlanDesc, wochenNachPlanDesc.getAttribute(workout.getWochenNachPlan()));
+            query.addAttribute(verletzungenDesc, verletzungenDesc.getAttribute(workout.isVerletzungen()));
+            query.addAttribute(vorliebeGeraet1Desc, vorliebeGeraet1Desc.getAttribute(workout.getVorliebeGeraet1()));
+            query.addAttribute(vorliebeGeraet2Desc, vorliebeGeraet2Desc.getAttribute(workout.getVorliebeGeraet2()));
+            query.addAttribute(hassGeraet1Desc, hassGeraet1Desc.getAttribute(workout.getHassGeraet1()));
+            query.addAttribute(hassGeraet2Desc, hassGeraet2Desc.getAttribute(workout.getHassGeraet2()));
+            query.addAttribute(vorhandeneGeraeteDesc, vorhandeneGeraeteDesc.getAttribute(workout.getVorhandeneGeraete()));
+            query.addAttribute(trainingsmethodeDesc, trainingsmethodeDesc.getAttribute(workout.getTrainingsmethode()));
+            query.addAttribute(zielmuskulaturDesc, zielmuskulaturDesc.getAttribute(workout.getZielmuskulatur()));
+            query.addAttribute(intensitaetDesc, intensitaetDesc.getAttribute(workout.getIntensitaet()));
+            System.out.println("Workout Athlete Debug: " + workout.getAthlete());
+            query.addAttribute(athleteDesc, athleteDesc.getAttribute(workout.getAthlete()));
+            
         } catch (ParseException e) {
             System.err.println("[ERROR] BookAgent: Error while creating the query! " + e.getMessage());
         }
 
         // Send query
-        athletenRetrieve.start();
-        System.out.println("[DEBUG] CbrAgent: Query successful!");
+        workoutRetrieve.start();
+        System.out.println("[DEBUG] CbrAgent: Workout Query successful!");
         return workoutRetrieve.getResult();
 	}
 	
@@ -632,34 +645,33 @@ public class CbrAgent {
 	}
 	
 	public ArrayList<Workout>  printWorkout(List<Pair<Instance, Similarity>> workoutResult, int numberOfBestCases) {
-		
-	    ArrayList<Workout> resultingWorkout = new ArrayList<Workout>();
-	    for (int i = 0; i < numberOfBestCases; i++) {
-	        
-	        Instance obj = workoutConcept.getInstance(workoutResult.get(i).getFirst().getName());
-	        Workout workout = new Workout(
-	                Integer.parseInt(obj.getAttForDesc(trainingszeitWocheDesc).getValueAsString()),
-                    Integer.parseInt(obj.getAttForDesc(trainingszeitSessionDesc).getValueAsString()),
-                    Integer.parseInt(obj.getAttForDesc(uebungenProWorkoutDesc).getValueAsString()),
-                    Integer.parseInt(obj.getAttForDesc(wochenNachPlanDesc).getValueAsString()),
-                    obj.getAttForDesc(verletzungenDesc).getValueAsString(),
-                    obj.getAttForDesc(vorliebeGeraet1Desc).getValueAsString(),
-                    obj.getAttForDesc(vorliebeGeraet2Desc).getValueAsString(),
-                    obj.getAttForDesc(hassGeraet1Desc).getValueAsString(),
-                    obj.getAttForDesc(hassGeraet2Desc).getValueAsString(),
-                    obj.getAttForDesc(vorhandeneGeraeteDesc).getValueAsString(),
-                    obj.getAttForDesc(trainingsmethodeDesc).getValueAsString();
-	                obj.getAttForDesc(zielmuskulaturDesc).getValueAsString();
-	                obj.getAttForDesc(intensitaetDesc).getValueAsString();
-	                obj.getAttForDesc(AthleteDesc).getValueAsString();
-	        resultingWorkout.add(workout);
-	        resultingWorkout.get(i).setSimilarity(workoutResult.get(i).getSecond().getValue());
-            System.out.println(workoutResult.get(i).getFirst().getName() + " - Similarity: "
-                    + Math.floor(workoutResult.get(i).getSecond().getValue() * 100) / 100);
-	    }
-	     return resultingWorkout;           
-	                
-	    }
+		  ArrayList<Workout> resultingWorkout = new ArrayList<Workout>();
+		    for (int i = 0; i < numberOfBestCases; i++) {
+		        
+		        Instance obj = workoutConcept.getInstance(workoutResult.get(i).getFirst().getName());
+		        Workout workout = new Workout(
+		                Integer.parseInt(obj.getAttForDesc(trainingszeitWocheDesc).getValueAsString()),
+	                    Integer.parseInt(obj.getAttForDesc(trainingszeitSessionDesc).getValueAsString()),
+	                    Integer.parseInt(obj.getAttForDesc(uebungenProWorkoutDesc).getValueAsString()),
+	                    Integer.parseInt(obj.getAttForDesc(wochenNachPlanDesc).getValueAsString()),
+	                    Boolean.parseBoolean(obj.getAttForDesc(verletzungenDesc).getValueAsString()),
+	                    obj.getAttForDesc(vorliebeGeraet1Desc).getValueAsString(),
+	                    obj.getAttForDesc(vorliebeGeraet2Desc).getValueAsString(),
+	                    obj.getAttForDesc(hassGeraet1Desc).getValueAsString(),
+	                    obj.getAttForDesc(hassGeraet2Desc).getValueAsString(),
+	                    obj.getAttForDesc(vorhandeneGeraeteDesc).getValueAsString(),
+	                    obj.getAttForDesc(trainingsmethodeDesc).getValueAsString(),
+		                obj.getAttForDesc(zielmuskulaturDesc).getValueAsString(),
+		                obj.getAttForDesc(intensitaetDesc).getValueAsString(),
+		                obj.getAttForDesc(athleteDesc).getValueAsString());
+		        resultingWorkout.add(workout);
+		        resultingWorkout.get(i).setSimilarity(workoutResult.get(i).getSecond().getValue());
+	            System.out.println(workoutResult.get(i).getFirst().getName() + " - Similarity: "
+	                    + Math.floor(workoutResult.get(i).getSecond().getValue() * 100) / 100);
+		    }
+		     return resultingWorkout;           
+		                
+		    
 	}	
 	
 	
