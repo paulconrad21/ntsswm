@@ -73,8 +73,8 @@ public class CbrAgent {
 	private IntegerDesc trainingszeitSessionDesc;
 	private IntegerDesc uebungenProWorkoutDesc;	
 	private IntegerDesc wochenNachPlanDesc;
-	private BooleanDesc verletzungenDesc;
-	private SymbolDesc vorliebeGerat1Desc;
+	private SymbolDesc verletzungenDesc;
+	private SymbolDesc vorliebeGeraet1Desc;
 	private SymbolDesc vorliebeGeraet2Desc;
 	private SymbolDesc hassGeraet1Desc;
 	private SymbolDesc hassGeraet2Desc;
@@ -83,7 +83,7 @@ public class CbrAgent {
 	private SymbolDesc zielmuskulaturDesc;
 	private SymbolDesc intensitaetDesc;
 	private StringDesc AthleteDesc;
-	//test test
+	
 	
 	
 	
@@ -265,7 +265,150 @@ public class CbrAgent {
 	}
 	
 	private void initWorkoutConcept() {
-		
+	    try {
+            workoutConcept = project.createTopConcept("Workout");
+            workoutGlobalSim = workoutConcept.addAmalgamationFct(AmalgamationConfig.WEIGHTED_SUM, "workoutSimFct", true);
+            
+            //INTEGER:
+            trainingszeitWocheDesc = new IntegerDesc(workoutConcept, "trainingsZeitProWoche", 1, 25);
+            IntegerFct trainingszeitWocheFct = trainingszeitWocheDesc.addIntegerFct("trainingszeitWocheFct", true);
+            trainingszeitWocheFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+            trainingszeitWocheFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+            trainingszeitWocheFct.setFunctionParameterR(2);
+            trainingszeitWocheFct.setFunctionParameterL(2);
+            workoutGlobalSim.setWeight("trainingsZeitProWoche", 2);
+            
+            trainingszeitSessionDesc = new IntegerDesc(workoutConcept, "trainingszeitProWorkout", 1, 300);
+            IntegerFct trainingszeitSessionFct = trainingszeitSessionDesc.addIntegerFct("trainingszeitSessionFct", true);
+            trainingszeitSessionFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+            trainingszeitSessionFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+            trainingszeitSessionFct.setFunctionParameterR(2);
+            trainingszeitSessionFct.setFunctionParameterL(2);
+            workoutGlobalSim.setWeight("trainingszeitProWorkout", 2);
+            
+            uebungenProWorkoutDesc = new IntegerDesc(workoutConcept, "uebungenProWorkout", 1, 10);
+            IntegerFct uebungenProWorkoutFct = uebungenProWorkoutDesc.addIntegerFct("uebungenProWorkoutFct", true);
+            uebungenProWorkoutFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+            uebungenProWorkoutFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+            uebungenProWorkoutFct.setFunctionParameterR(2);
+            uebungenProWorkoutFct.setFunctionParameterL(2);
+            workoutGlobalSim.setWeight("uebungenProWorkout", 2);
+            
+            wochenNachPlanDesc = new IntegerDesc(workoutConcept, "wochenNachPlan", 1, 20);
+            IntegerFct wochenNachPlanFct = wochenNachPlanDesc.addIntegerFct("wochenNachPlanFct", true);
+            wochenNachPlanFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+            wochenNachPlanFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+            wochenNachPlanFct.setFunctionParameterR(2);
+            wochenNachPlanFct.setFunctionParameterL(2);
+            workoutGlobalSim.setWeight("wochenNachPlan", 2);
+            
+                              
+            //SYMBOL:
+            
+            verletzungenDesc = new SymbolDesc(workoutConcept, "verletzungen", null);
+            verletzungenDesc.addSymbol("Ja");
+            verletzungenDesc.addSymbol("Nein");
+            SymbolFct verletzungenFct = verletzungenDesc.addSymbolFct("verletzungenFct", true);
+            verletzungenFct.setSimilarity("Ja", "Nein", 0.20);
+            verletzungenFct.setSimilarity("Nein", "Ja", 0.20);
+            workoutGlobalSim.setWeight("verletzungen", 2);
+                      
+            vorliebeGeraet1Desc = new SymbolDesc(workoutConcept, "vorliebeGeraet1", null);
+            vorliebeGeraet1Desc.addSymbol("Brustpresse");
+            vorliebeGeraet1Desc.addSymbol("Latzug");
+            vorliebeGeraet1Desc.addSymbol("Rudern");
+            SymbolFct vorliebeGeraet1Fct = vorliebeGeraet1Desc.addSymbolFct("vorliebeGeraet1Fct", true);
+            vorliebeGeraet1Fct.setSimilarity("Brustpresse", "Latzug", 0.50);
+            vorliebeGeraet1Fct.setSimilarity("Brustpresse", "Rudern", 0.50);
+            vorliebeGeraet1Fct.setSimilarity("Latzug", "Rudern", 0.20);
+            vorliebeGeraet1Fct.setSimilarity("Latzugg", "Brustpresse", 0.50);
+            vorliebeGeraet1Fct.setSimilarity("Rudern", "Latzug", 0.20);
+            vorliebeGeraet1Fct.setSimilarity("Rudern", "Brustpresse", 0.50);
+            workoutGlobalSim.setWeight("vorliebeGeraet1", 2);
+                        
+            vorliebeGeraet2Desc = new SymbolDesc(workoutConcept, "vorliebeGeraet2", null);
+            vorliebeGeraet2Desc.addSymbol("Beinpresse");
+            vorliebeGeraet2Desc.addSymbol("Beinbizeps");
+            vorliebeGeraet2Desc.addSymbol("Quadrizeps");
+            SymbolFct vorliebeGeraet2Fct = vorliebeGeraet2Desc.addSymbolFct("vorliebeGeraet2Fct", true);
+            vorliebeGeraet2Fct.setSimilarity("Beinpresse", "Beinbizeps", 0.20);
+            vorliebeGeraet2Fct.setSimilarity("Beinpresse", "Quadrizeps", 0.20);
+            vorliebeGeraet2Fct.setSimilarity("Beinbizeps", "Beinpresse", 0.20);
+            vorliebeGeraet2Fct.setSimilarity("Beinbizeps", "Quadrizeps", 0.40);
+            vorliebeGeraet2Fct.setSimilarity("Quadrizeps", "Beinpresse", 0.20);
+            vorliebeGeraet2Fct.setSimilarity("Quadrizeps", "Beinbizeps", 0.40);
+            workoutGlobalSim.setWeight("vorliebeGeraet2", 2);
+            
+            hassGeraet1Desc = new SymbolDesc(workoutConcept, "hassGeraet1", null);
+            hassGeraet1Desc.addSymbol("Brustpresse");
+            hassGeraet1Desc.addSymbol("Latzug");
+            hassGeraet1Desc.addSymbol("Rudern");
+            SymbolFct hassGeraet1Fct = hassGeraet1Desc.addSymbolFct("hassGeraet1Fct", true);
+            hassGeraet1Fct.setSimilarity("Brustpresse", "Latzug", 0.50);
+            hassGeraet1Fct.setSimilarity("Brustpresse", "Rudern", 0.50);
+            hassGeraet1Fct.setSimilarity("Latzug", "Rudern", 0.20);
+            hassGeraet1Fct.setSimilarity("Latzugg", "Brustpresse", 0.50);
+            hassGeraet1Fct.setSimilarity("Rudern", "Latzug", 0.20);
+            hassGeraet1Fct.setSimilarity("Rudern", "Brustpresse", 0.50);
+            workoutGlobalSim.setWeight("hassGeraet1", 2);
+            
+            hassGeraet2Desc = new SymbolDesc(workoutConcept, "hassGeraet2", null);
+            hassGeraet2Desc.addSymbol("Beinpresse");
+            hassGeraet2Desc.addSymbol("Beinbizeps");
+            hassGeraet2Desc.addSymbol("Quadrizeps");
+            SymbolFct hassGeraet2Fct = hassGeraet2Desc.addSymbolFct("hassGeraet2Fct", true);
+            hassGeraet2Fct.setSimilarity("Beinpresse", "Beinbizeps", 0.20);
+            hassGeraet2Fct.setSimilarity("Beinpresse", "Quadrizeps", 0.20);
+            hassGeraet2Fct.setSimilarity("Beinbizeps", "Beinpresse", 0.20);
+            hassGeraet2Fct.setSimilarity("Beinbizeps", "Quadrizeps", 0.40);
+            hassGeraet2Fct.setSimilarity("Quadrizeps", "Beinpresse", 0.20);
+            hassGeraet2Fct.setSimilarity("Quadrizeps", "Beinbizeps", 0.40);
+            workoutGlobalSim.setWeight("hassGeraet2", 2);
+                        
+            vorhandeneGeraeteDesc = new SymbolDesc(workoutConcept, "vorhandeneGeraete", null);
+            vorhandeneGeraeteDesc.addSymbol("Ja");
+            vorhandeneGeraeteDesc.addSymbol("Nein");
+            SymbolFct vorhandeneGeraeteFct = vorhandeneGeraeteDesc.addSymbolFct("vorhandeneGeraeteFct", true);
+            vorhandeneGeraeteFct.setSimilarity("Ja", "Nein", 0.20);
+            vorhandeneGeraeteFct.setSimilarity("Nein", "Ja", 0.20);
+            workoutGlobalSim.setWeight("vorhandeneGeraete", 2);
+            
+            trainingsmethodeDesc = new SymbolDesc(workoutConcept, "trainingsmethode", null);
+            trainingsmethodeDesc.addSymbol("Kraftsport");
+            trainingsmethodeDesc.addSymbol("Körpergewicht");
+            trainingsmethodeDesc.addSymbol("Cardio");
+            SymbolFct trainingsmethodeFct = trainingszustandDesc.addSymbolFct("trainingsmethodeFct", true);
+            trainingsmethodeFct.setSimilarity("Kraftsport", "Körpergewicht", 0.60);
+            trainingsmethodeFct.setSimilarity("Kraftsport", "Cardio", 0.40);
+            trainingsmethodeFct.setSimilarity("Körpergewicht", "Kraftsport", 0.10);
+            trainingsmethodeFct.setSimilarity("Körpergewicht", "Cardio", 0.60);
+            trainingsmethodeFct.setSimilarity("Cardio", "Kraftsport", 0.40);
+            trainingsmethodeFct.setSimilarity("Cardio", "Körpergewicht", 0.20);
+            workoutGlobalSim.setWeight("trainingsmethode", 2);    
+            
+            zielmuskulaturDesc = new SymbolDesc(workoutConcept, "zielmuskulatur", null);
+            zielmuskulaturDesc.addSymbol("Oberkoerper");
+            zielmuskulaturDesc.addSymbol("Unterkoerper");
+            SymbolFct zielmuskulaturFct = zielmuskulaturDesc.addSymbolFct("zielmuskulaturFct", true);
+            zielmuskulaturFct.setSimilarity("Oberkoerper", "Unterkoerper", 0.50);
+            zielmuskulaturFct.setSimilarity("Unterkoerper", "Oberkoerper", 0.50);
+            workoutGlobalSim.setWeight("zielmuskulatur", 2);
+            
+            intensitaetDesc = new SymbolDesc(workoutConcept, "intensitaet", null);
+            intensitaetDesc.addSymbol("niedrigeIntensitaet");
+            intensitaetDesc.addSymbol("hoheIntensitaet");
+            SymbolFct intensitaetFct = intensitaetDesc.addSymbolFct("intensitaetFct", true);
+            intensitaetFct.setSimilarity("niedrigeIntensitaet", "hoheIntensitaet", 0.20);
+            intensitaetFct.setSimilarity("hoheIntensitaet", "niedrigeIntensitaet", 0.20);
+            workoutGlobalSim.setWeight("intensitaet", 2);
+            
+            //String
+            
+            AthleteDesc = new StringDesc(workoutConcept, "athleten");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 	
 	private void initAthletenCaseBase() {
@@ -324,7 +467,54 @@ public class CbrAgent {
 	}
 	
 	private void initWorkoutCaseBase() {
-		//Einlesen der CSV Datei und abspeichern als CaseBase		
+		//Einlesen der CSV Datei und abspeichern als CaseBase	
+	    try {
+            workoutCaseBase = project.createDefaultCB("workoutCaseBase");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        //Einlesen aus der CSV Datei
+        try {
+
+            Instance instance;
+            String line = "";
+            String cvsSplitBy = ",";
+
+            BufferedReader br = new BufferedReader(new FileReader("Workout_CaseBase.csv"));
+            while ((line = br.readLine()) != null) // returns a Boolean value
+            {
+                String[] workout = line.split(cvsSplitBy); // use comma as separator
+
+            
+                try {
+                    instance = workoutConcept.addInstance(workout[0]);
+                    instance.addAttribute(trainingszeitWocheDesc, workout[1]);
+                    instance.addAttribute(trainingszeitSessionDesc, workout[2]);
+                    instance.addAttribute(uebungenProWorkoutDesc, workout[3]);
+                    instance.addAttribute(wochenNachPlanDesc, workout[4]);
+                    instance.addAttribute(verletzungenDesc, workout[5]);
+                    instance.addAttribute(vorliebeGeraet1Desc, workout[6]);
+                    instance.addAttribute(vorliebeGeraet2Desc, workout[7]);
+                    instance.addAttribute(hassGeraet1Desc, workout[8]);
+                    instance.addAttribute(hassGeraet2Desc, workout[9]);
+                    instance.addAttribute(vorhandeneGeraeteDesc, workout[10]);
+                    instance.addAttribute(trainingsmethodeDesc, workout[11]);
+                    instance.addAttribute(zielmuskulaturDesc, workout[12]);
+                    instance.addAttribute(intensitaetDesc, workout[13]);
+                    instance.addAttribute(AthleteDesc, workout[13]);
+                    workoutCaseBase.addCase(instance);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
+            }
+            br.close();
+        } catch (IOException e) {
+            System.err.println("CbrAgent.java: Fehler beim Hinzufuegen der Athleten-Cases.");
+            e.printStackTrace();
+        }
 	}
 	
 	public List<Pair<Instance, Similarity>> startAthletenQuery(Athlete athlete) {
@@ -370,7 +560,47 @@ public class CbrAgent {
 	}
 	
 	public List<Pair<Instance, Similarity>> startWorkoutQuery(Workout workout) {
-		
+	 // Get the values of the request
+        trainingszeitWocheDesc = (IntegerDesc) this.workoutConcept.getAllAttributeDescs().get("trainingsZeitProWoche");
+        trainingszeitSessionDesc = (IntegerDesc) this.workoutConcept.getAllAttributeDescs().get("trainingszeitProWorkout");
+        uebungenProWorkoutDesc = (IntegerDesc) this.workoutConcept.getAllAttributeDescs().get("uebungenProWorkout");
+        wochenNachPlanDesc = (IntegerDesc) this.workoutConcept.getAllAttributeDescs().get("wochenNachPlan");
+        verletzungenDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("verletzungen");
+        vorliebeGeraet1Desc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("vorliebeGeraet1");
+        vorliebeGeraet2Desc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("vorliebeGeraet2");
+        hassGeraet1Desc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("hassGeraet1");
+        hassGeraet2Desc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("hassGeraet2");
+        vorhandeneGeraeteDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("vorhandeneGeraete");
+        trainingsmethodeDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("trainingsmethode");
+        zielmuskulaturDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("zielmuskulatur");
+        intensitaetDesc = (SymbolDesc) this.workoutConcept.getAllAttributeDescs().get("intensitaet");
+        //athlete add
+        // Insert values into query
+       /* try {
+            workoutRetrieve = new Retrieval(workoutConcept, workoutCaseBase);
+            workoutRetrieve.setRetrievalMethod(RetrievalMethod.RETRIEVE_SORTED);
+            Instance query = workoutRetrieve.getQueryInstance();
+            query.addAttribute(trainingszeitWocheDesc, trainingszeitWocheDesc.getAttribute(workout.gettrainingszeitWoche));
+            query.addAttribute(gewichtDesc, gewichtDesc.getAttribute(athlete.getGewicht()));
+            query.addAttribute(erfahrungInJahreDesc, erfahrungInJahreDesc.getAttribute(athlete.getErfahrungInJahre()));
+            query.addAttribute(koerperfettanteilDesc, koerperfettanteilDesc.getAttribute(athlete.getKoerperfettanteil()));
+            query.addAttribute(ruhepulsDesc, ruhepulsDesc.getAttribute(athlete.getRuhepuls()));
+            query.addAttribute(maxHerfrequenzDesc, maxHerfrequenzDesc.getAttribute(athlete.getMaxHerzfrequenz()));
+            query.addAttribute(trainingszustandDesc, trainingszustandDesc.getAttribute(athlete.getTrainingszustand()));
+            query.addAttribute(geschlechtDesc, geschlechtDesc.getAttribute(athlete.getGeschlecht()));
+            query.addAttribute(zielDesc, zielDesc.getAttribute(athlete.getZiel()));
+            query.addAttribute(sportartDesc, sportartDesc.getAttribute(athlete.getSportart()));
+            query.addAttribute(regenerationsfaehigkeitDesc, regenerationsfaehigkeitDesc.getAttribute(athlete.getRegenerationsfaehigkeit()));
+            query.addAttribute(motivationsfaktorDesc, motivationsfaktorDesc.getAttribute(athlete.getMotivationsfaktor()));
+            */
+        } catch (ParseException e) {
+            System.err.println("[ERROR] BookAgent: Error while creating the query! " + e.getMessage());
+        }
+
+        // Send query
+        athletenRetrieve.start();
+        System.out.println("[DEBUG] CbrAgent: Query successful!");
+        return workoutRetrieve.getResult();
 	}
 	
 	public ArrayList<Athlete>  printAthlete(List<Pair<Instance, Similarity>> athletenResult, int numberOfBestCases) {
@@ -403,6 +633,33 @@ public class CbrAgent {
 	
 	public ArrayList<Workout>  printWorkout(List<Pair<Instance, Similarity>> workoutResult, int numberOfBestCases) {
 		
+	    ArrayList<Workout> resultingWorkout = new ArrayList<Workout>();
+	    for (int i = 0; i < numberOfBestCases; i++) {
+	        
+	        Instance obj = workoutConcept.getInstance(workoutResult.get(i).getFirst().getName());
+	        Workout workout = new Workout(
+	                Integer.parseInt(obj.getAttForDesc(trainingszeitWocheDesc).getValueAsString()),
+                    Integer.parseInt(obj.getAttForDesc(trainingszeitSessionDesc).getValueAsString()),
+                    Integer.parseInt(obj.getAttForDesc(uebungenProWorkoutDesc).getValueAsString()),
+                    Integer.parseInt(obj.getAttForDesc(wochenNachPlanDesc).getValueAsString()),
+                    obj.getAttForDesc(verletzungenDesc).getValueAsString(),
+                    obj.getAttForDesc(vorliebeGeraet1Desc).getValueAsString(),
+                    obj.getAttForDesc(vorliebeGeraet2Desc).getValueAsString(),
+                    obj.getAttForDesc(hassGeraet1Desc).getValueAsString(),
+                    obj.getAttForDesc(hassGeraet2Desc).getValueAsString(),
+                    obj.getAttForDesc(vorhandeneGeraeteDesc).getValueAsString(),
+                    obj.getAttForDesc(trainingsmethodeDesc).getValueAsString();
+	                obj.getAttForDesc(zielmuskulaturDesc).getValueAsString();
+	                obj.getAttForDesc(intensitaetDesc).getValueAsString();
+	                obj.getAttForDesc(AthleteDesc).getValueAsString();
+	        resultingWorkout.add(workout);
+	        resultingWorkout.get(i).setSimilarity(workoutResult.get(i).getSecond().getValue());
+            System.out.println(workoutResult.get(i).getFirst().getName() + " - Similarity: "
+                    + Math.floor(workoutResult.get(i).getSecond().getValue() * 100) / 100);
+	    }
+	     return resultingWorkout;           
+	                
+	    }
 	}	
 	
 	
