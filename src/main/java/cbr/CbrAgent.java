@@ -1,6 +1,7 @@
 package cbr;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -85,6 +86,9 @@ public class CbrAgent {
 	private SymbolDesc intensitaetDesc;
 	private StringDesc athleteDesc;
 	
+	
+	// pfad zum ordner
+	private String aktuellerOrdner = "C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr"; 
 	
 	
 	
@@ -261,7 +265,7 @@ public class CbrAgent {
 			//String
 			athletenBezeichnungDesc = new StringDesc(athletenConcept, "AthleteBezeichnung");
 			athletenBezeichnungDesc.addStringFct(StringConfig.LEVENSHTEIN, "athleteBezeichnungFct", true);
-			workoutGlobalSim.setWeight("AthleteBezeichnung", 2);
+			athletenGlobalSim.setWeight("AthleteBezeichnung", 2);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -409,9 +413,9 @@ public class CbrAgent {
             workoutGlobalSim.setWeight("intensitaet", 2);
             
             //String
-            athleteDesc = new StringDesc(workoutConcept, "Athlete");
+            athleteDesc = new StringDesc(workoutConcept, "athlete");
             athleteDesc.addStringFct(StringConfig.LEVENSHTEIN, "athleteFct", true);
-			workoutGlobalSim.setWeight("Athlete", 2);
+			workoutGlobalSim.setWeight("athlete", 2);
 
             
         } catch (Exception e) {
@@ -435,8 +439,8 @@ public class CbrAgent {
 			Instance instance;
 			String line = "";
 			String cvsSplitBy = ",";
-
-			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Athletes_CaseBase.csv"));
+			String csvFile = aktuellerOrdner + File.separator + "Athletes_CaseBase.csv";
+			BufferedReader br = new BufferedReader(new FileReader(csvFile));
 			while ((line = br.readLine()) != null) // returns a Boolean value
 			{
 				String[] athlete = line.split(cvsSplitBy); // use comma as separator
@@ -491,8 +495,8 @@ public class CbrAgent {
             Instance instance;
             String line = "";
             String cvsSplitBy = ",";
-
-            BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Workout_CaseBase.csv"));
+            String csvFile = aktuellerOrdner + File.separator + "Workout_CaseBase.csv";
+            BufferedReader br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) // returns a Boolean value
             {
                 String[] workout = line.split(cvsSplitBy); // use comma as separator
@@ -650,6 +654,7 @@ public class CbrAgent {
 		        
 		        Instance obj = workoutConcept.getInstance(workoutResult.get(i).getFirst().getName());
 		        Workout workout = new Workout(
+		        		Integer.parseInt(workoutResult.get(i).getFirst().getName()),
 		                Integer.parseInt(obj.getAttForDesc(trainingszeitWocheDesc).getValueAsString()),
 	                    Integer.parseInt(obj.getAttForDesc(trainingszeitSessionDesc).getValueAsString()),
 	                    Integer.parseInt(obj.getAttForDesc(uebungenProWorkoutDesc).getValueAsString()),
@@ -684,7 +689,8 @@ public class CbrAgent {
 				String line = "";
 				String cvsSplitBy = ",";
 				int counter = 1;
-				BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Workouts.csv"));
+				String csvFile = aktuellerOrdner + File.separator + "Workouts.csv";
+				BufferedReader br = new BufferedReader(new FileReader(csvFile));
 				while ((line = br.readLine()) != null)
 				{
 					if(counter == id) {
@@ -692,7 +698,13 @@ public class CbrAgent {
 						
 						Ergebnis ergebnis = new Ergebnis(id, athlete[1], athlete[2], athlete[3], athlete[4], athlete[5], athlete[6],
 								athlete[7], athlete[8], athlete[9], athlete[10], Double.parseDouble(athlete[11]),athlete[12]);
-						
+						System.out.println("Workout anhand der ID bekommen:");
+						System.out.println(athlete[1]);
+						System.out.println(athlete[2]);
+						System.out.println(athlete[3]);
+						System.out.println(athlete[4]);
+						System.out.println(athlete[5]);
+						System.out.println(athlete[6]);
 						br.close();
 						return ergebnis;
 					}								
@@ -711,52 +723,51 @@ public class CbrAgent {
 	// Abspeichern des angepassten Workouts des Nutzers in der Workout.csv
 	public void saveWorkout(Ergebnis ergebnis) {
 		
-		String csvFile = "C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Workouts.csv";
+		String csvFile = aktuellerOrdner + File.separator + "Workouts.csv";
 
-		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFile, true))) {
+		String[] addErgebnis = { String.valueOf(ergebnis.getId()), ergebnis.getUebung1(),ergebnis.getZeit1wdh1(), ergebnis.getUebung2(),
+				ergebnis.getZeit2wdh2(),ergebnis.getUebung3(),ergebnis.getZeit3wdh3(),ergebnis.getUebung4(),ergebnis.getZeit4wdh4(),
+				ergebnis.getUebung5(),ergebnis.getZeit5wdh5(),String.valueOf(ergebnis.getPauseInMin()),ergebnis.getKategorie()};
+		
+		try {
+			CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFile, true));
 			
-			String[] addErgebnis = { String.valueOf(ergebnis.getId()), ergebnis.getUebung1(),ergebnis.getZeit1wdh1(), ergebnis.getUebung2(),
-					ergebnis.getZeit2wdh2(),ergebnis.getUebung3(),ergebnis.getZeit3wdh3(),ergebnis.getUebung4(),ergebnis.getZeit4wdh4(),
-					ergebnis.getUebung5(),ergebnis.getZeit5wdh5(),String.valueOf(ergebnis.getPauseInMin()),ergebnis.getKategorie()};
-
-			csvWriter.writeNext(addErgebnis);
-			System.out.println("Ergebnis zur Workout.csv hinzugefuegt");
+			csvWriter.writeNext(addErgebnis, false);
+			System.out.println("Neues Workout in workout.csv abgespeichert");
 			csvWriter.close();
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			initWorkoutCaseBase();
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		
 		
 	}
 	
 	// Abspeichern des Workouts in Workout_CaseBase.csv
 	public void saveWorkoutInCaseBase(Workout workout) {
-		String csvFile = "C:\\Users\\Paul\\eclipse-workspace\\Ntswwm-Workout-Planner\\src\\main\\java\\cbr\\Workout_CaseBase.csv";
-
-		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFile, true))) {
+		String csvFile = aktuellerOrdner + File.separator + "Workout_CaseBase.csv";
+		
+		String[] addWorkout = { String.valueOf(workout.getId()), String.valueOf(workout.getTrainingszeitWoche()),String.valueOf(workout.getTrainingszeitSession()),
+				String.valueOf(workout.getUebungenProWorkout()),String.valueOf(workout.getWochenNachPlan()),String.valueOf(workout.isVerletzungen()),
+				workout.getVorliebeGeraet1(),workout.getVorliebeGeraet2(),workout.getHassGeraet1(),workout.getHassGeraet2(),workout.getVorhandeneGeraete(),
+				workout.getTrainingsmethode(),workout.getZielmuskulatur(),workout.getIntensitaet(),workout.getAthlete()};
+		
+		try {
+			CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFile, true));
 			
-			String[] addWorkout = { String.valueOf(workout.getId()), String.valueOf(workout.getTrainingszeitWoche()),String.valueOf(workout.getTrainingszeitSession()),
-						String.valueOf(workout.getUebungenProWorkout()),String.valueOf(workout.getWochenNachPlan()),String.valueOf(workout.isVerletzungen()),
-						workout.getVorliebeGeraet1(),workout.getVorliebeGeraet2(),workout.getHassGeraet1(),workout.getHassGeraet2(),workout.getVorhandeneGeraete(),
-						workout.getTrainingsmethode(),workout.getZielmuskulatur(),workout.getIntensitaet(),workout.getAthlete()};
-
-			csvWriter.writeNext(addWorkout);
-			System.out.println("Bearbeitetes Workout zur Workout CaseBase hinzugefuegt");
+			csvWriter.writeNext(addWorkout, false);
+			System.out.println("Neues Workout in Workout_CaseBase.csv abgespeichert");
 			csvWriter.close();
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			initWorkoutCaseBase();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}		
 	}
 	
 	public int getAthletenCaseBaseSize() {
