@@ -100,6 +100,8 @@ public class WorkoutServlet extends HttpServlet{
 			} catch(Exception e) {
 				System.out.println("Fehler beim Parsen der Eingaben");
 				e.printStackTrace();
+				request.setAttribute("message", e.getMessage());
+				request.getRequestDispatcher("error.jsp").forward(request, response);
 			}
 			//Athleten anlegen
 			Athlete queryAthlete = new Athlete(inputKoerpergroesseParsed,inputKoerpergewichtParsed,inputTrainingserfahrungParsed,
@@ -114,9 +116,10 @@ public class WorkoutServlet extends HttpServlet{
 			athletenResult = cbrAgent.startAthletenQuery(queryAthlete);
 			
 			resultingAthletes = cbrAgent.printAthlete(athletenResult, 1);
+			System.out.println("Athleten Bezeichnung: " + resultingAthletes.get(0).getAthletenBezeichnung());
 			
 			//Erstellen eines Workout-Objekts und Frontend Daten und Athlete übergeben
-			workout = new Workout(inputWorkoutsProWocheParsed,inputTrainingszeitProSessionParsed,inputUebungenProWorkoutParsed,
+			workout = new Workout(-1, inputWorkoutsProWocheParsed,inputTrainingszeitProSessionParsed,inputUebungenProWorkoutParsed,
 				inputWochenNachPlanParsed,inputVerletzungenParsed,inputVorliebeGeraet1,inputVorliebeGeraet2,inputHassGeraet1,inputHassGeraet2,
 				inputVorhandeneGeraete,inputTrainingsmethode,inputZielmuskulatur,inputIntensitaet,resultingAthletes.get(0).getAthletenBezeichnung());
 			  
@@ -127,10 +130,15 @@ public class WorkoutServlet extends HttpServlet{
 			
 			//Ergebnis auswerten in Print funktion und ID des ähnlichsten Workouts abspeichern
 			Workout mostSimilarWorkout = resultingWorkouts.get(0);
-			
+			System.out.println("Most similar workout ID: " + mostSimilarWorkout.getId());
+			System.out.println("Most similar workout Wochen Nach Plan: " + mostSimilarWorkout.getWochenNachPlan());
 			//Aus Workouts.csv Workout basierend auf ID auslesen
 			Ergebnis workoutErgebnis = cbrAgent.getWorkout(mostSimilarWorkout.getId());
-			
+			System.out.println("Printen im Servlet:");
+			System.out.println(workoutErgebnis.getZeit1wdh1());
+			System.out.println(workoutErgebnis.getZeit2wdh2());
+			System.out.println(workoutErgebnis.getZeit3wdh3());
+			System.out.println(workoutErgebnis.getZeit4wdh4());
 			
 			//Daten im request hinterlegen und weiterleiten auf extra Seite
 			request.setAttribute("uebung1", workoutErgebnis.getUebung1());
@@ -153,6 +161,8 @@ public class WorkoutServlet extends HttpServlet{
 			
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
+			request.setAttribute("message", e.getMessage());
+			request.getRequestDispatcher("error.jsp").forward(request, response);
 			e.printStackTrace();
 		}
 		
@@ -162,7 +172,6 @@ public class WorkoutServlet extends HttpServlet{
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
 		
 		//Angepasstes Workout entgegennehmen
 		String inputUebung1 = request.getParameter("uebung1");
@@ -179,6 +188,7 @@ public class WorkoutServlet extends HttpServlet{
 		String inputKategorie = request.getParameter("kategorie");
 		
 		//id abfragen
+		cbrAgent = new CbrAgent();
 		int newId = cbrAgent.getWorkoutCaseBaseSize() + 1;
 		
 		//Abspeichern als Workout in Workout.csv
