@@ -117,7 +117,7 @@
 					</div>
 					<div class="form-group">
 					<p>Lieblingsübungen 1:</p>
-					<select name="vorliebeGerat1" size="4">
+					<select name="vorliebeGerat1" size="3">
 							<option selected>-</option>
 							<option>Bankdrücken</option>
 							<option>Klimmzüge</option>
@@ -128,7 +128,7 @@
 					<div class="row col-md-4" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);width: 33%;margin: 10px;">
 					<div class="form-group">
 					<p>Lieblingsübungen 2:</p>
-					<select name="vorliebeGerat2" size="4">
+					<select name="vorliebeGerat2" size="3">
 							<option selected>-</option>
 							<option>Bankdrücken</option>
 							<option>Klimmzüge</option>
@@ -137,7 +137,7 @@
 					</div>
 					<div class="form-group">
 					<p>Weniger beliebte Übungen 1:</p>
-					<select name="hassGeraet1" size="4">
+					<select name="hassGeraet1" size="3">
 							<option selected>-</option>
 							<option>Bankdrücken</option>
 							<option>Klimmzüge</option>
@@ -146,7 +146,7 @@
 					</div>
 					<div class="form-group">
 					<p>Weniger beliebte Übungen 2:</p>
-					<select name="hassGeraet2" size="4">
+					<select name="hassGeraet2" size="3">
 							<option selected>-</option>
 							<option>Bankdrücken</option>
 							<option>Klimmzüge</option>
@@ -155,14 +155,14 @@
 					</div>
 					<div class="form-group">
 					<p>Vorhandene Geräte:</p>
-					<select name="vorhandeneGeraete" size="4">
+					<select name="vorhandeneGeraete" size="2">
 							<option selected>Ja</option>
 							<option>Nein</option>
 					</select>
 					</div>
 					<div class="form-group">
 					<p>Trainingsmethode:</p>
-					<select name="trainingsmethode" size="4">
+					<select name="trainingsmethode" size="3">
 							<option selected>Kraftsport</option>
 							<option>Cardio</option>
 							<option>Körpergewicht</option>
